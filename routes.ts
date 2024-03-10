@@ -13,8 +13,9 @@ export const publicRoutes = [
  * @type {string[]}}
  */
 export const authRoutes = [
-    "/auth/signup",
     "/auth/signin",
+    "/auth/signup",
+    "/auth/error",
 ]
 
 /**
