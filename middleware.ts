@@ -20,7 +20,7 @@ export default auth((req) => {
   const isAuthRoutes = authRoutes.includes(nextUrl.pathname);
 
   console.log("Routes :", nextUrl.pathname)
-  console.log(nextUrl)
+  // console.log(nextUrl)
   
   if (isApiAuthRoutes) { return null };
 

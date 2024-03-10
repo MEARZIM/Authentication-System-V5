@@ -2,8 +2,8 @@ import NextAuth from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 
 import { db } from "@/lib/db"
-import { getUserById } from "@/data/user"
 import authConfig from "@/auth.config"
+import { getUserById } from "@/data/user"
 import { UserRole } from "@prisma/client"
 
 
@@ -30,17 +30,18 @@ export const {
     }
   },
   callbacks: {
-    // async signIn ({user}) {
-    //   console.log({user})
-    //   if (!user) return false;
+    async signIn({ user, account }) {
+      console.log(user)
+       // Allow OAuth without email verification
+       if (account?.provider !== "credentials") return true;
 
-    //   const existUser = await getUserById(user.id as string);
+       const existingUser = await getUserById(user.id as string);
+ 
+       // Prevent sign in without email verification
+       if (!existingUser?.emailVerified) return false;
 
-    //   if (!existUser || !existUser.emailVerified) return false;
-
-    //   console.log(user)
-    //   return true
-    // },
+       return true;
+    },
 
     async session({ token, session },) {
       console.log({ token })
