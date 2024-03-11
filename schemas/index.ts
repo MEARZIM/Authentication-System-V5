@@ -20,3 +20,16 @@ export const RegisterSchema = z.object({
         message: "Minimum length of password is 8 characters"
     })
 })
+
+export const ResetSchema = z.object({
+    email : z.string().email({
+        message: "Email is required."
+    }),
+})
+
+export const ResetNewPasswordSchema = z.object({
+    password : z.string().min(8,{
+        message: "Minimum length of password is 8 characters"
+    })
+})
+

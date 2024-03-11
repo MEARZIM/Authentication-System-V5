@@ -50,6 +50,6 @@ export const SignInAction = async (values : z.infer<typeof LoginSchema>) => {
                     return { error: "Something went wrong"}
             }
         }
-        // throw error
+        throw error
     }
 }

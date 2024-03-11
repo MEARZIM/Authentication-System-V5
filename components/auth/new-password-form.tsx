@@ -2,12 +2,12 @@
 
 import * as z from "zod"
 
-import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { useState, useTransition } from "react"
+import { useSearchParams } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { LoginSchema } from "@/schemas/index"
+import { ResetNewPasswordSchema } from "@/schemas/index"
 import {
     Form,
     FormItem,
@@ -22,30 +22,32 @@ import { Input } from "@/components/ui/input"
 import { CardWrapper } from "@/components/auth/card-wrapper"
 import { FormError } from "@/components/auth/errors/form-error"
 import { FormSuccess } from "@/components/auth/success/form-success"
-import { SignInAction } from "@/actions/signin"
+import { newPassword } from "@/actions/new-password"
 
-export const LoginForm = () => {
+export const NewPasswordForm = () => {
+    const token = useSearchParams().get('token')
+
     const [isPending, startTransiton] = useTransition();
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
 
-    console.log(error);
+    console.log(token);
 
-    const form = useForm<z.infer<typeof LoginSchema>>({
-        resolver: zodResolver(LoginSchema),
+    const form = useForm<z.infer<typeof ResetNewPasswordSchema>>({
+        resolver: zodResolver(ResetNewPasswordSchema),
         defaultValues: {
-            email: "",
             password: "",
         }
     });
 
-    const handleSubmit = (values: z.infer<typeof LoginSchema>) => {
+    const handleSubmit = (values: z.infer<typeof ResetNewPasswordSchema>) => {
         setError("");
         setSuccess("");
+        console.log(values);
 
-        startTransiton(() => {
-            SignInAction(values)
-                .then((data) => {
+        startTransiton(()=>{
+            newPassword(values, token)
+               .then((data) =>{
                     if (data?.error) {
                         form.reset();
                         setError(data.error);
@@ -55,19 +57,17 @@ export const LoginForm = () => {
                         form.reset();
                         setSuccess(data.success);
                     }
-
-                })
-                .catch(() => setError("Something went wrong"));
+               })
+               .catch(() => setError("Something went wrong"))
         })
     }
 
     return (
         <>
             <CardWrapper
-                headerLabel="WELCOME BACK"
-                backButtonLabel="Don't have an account?"
-                backButtonHref="/auth/signup"
-                showSocial
+                headerLabel="Enter a new password"
+                backButtonLabel="Back to Signin"
+                backButtonHref="/auth/signin"
             >
                 <Form {...form} >
                     <form
@@ -75,26 +75,6 @@ export const LoginForm = () => {
                         onSubmit={form.handleSubmit(handleSubmit)}
                     >
                         <div className="space-y-4">
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Email
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                placeholder="yourname@example.com"
-                                                type="email"
-                                                disabled={isPending}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
                             <FormField
                                 control={form.control}
                                 name="password"
@@ -106,25 +86,16 @@ export const LoginForm = () => {
                                         <FormControl>
                                             <Input
                                                 {...field}
-                                                placeholder="Your password"
+                                                placeholder="Enter your new password"
                                                 type="password"
                                                 disabled={isPending}
                                             />
                                         </FormControl>
-                                        <Button
-                                            size="sm"
-                                            variant="link"
-                                            className="flex justify-end px-0 font-normal"
-                                            asChild
-                                        >
-                                            <Link href="/auth/reset">
-                                                Forget Password?
-                                            </Link>
-                                        </Button>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
+                           
                         </div>
                         <FormSuccess message={success} />
                         <FormError message={error} />
@@ -133,7 +104,7 @@ export const LoginForm = () => {
                             className="w-full"
                             disabled={isPending}
                         >
-                            Sign in
+                           Reset Password
                         </Button>
                     </form>
                 </Form>

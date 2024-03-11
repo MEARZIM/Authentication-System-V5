@@ -2,12 +2,11 @@
 
 import * as z from "zod"
 
-import Link from "next/link"
-import { useForm } from "react-hook-form"
 import { useState, useTransition } from "react"
+import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { LoginSchema } from "@/schemas/index"
+import { ResetSchema } from "@/schemas/index"
 import {
     Form,
     FormItem,
@@ -22,30 +21,30 @@ import { Input } from "@/components/ui/input"
 import { CardWrapper } from "@/components/auth/card-wrapper"
 import { FormError } from "@/components/auth/errors/form-error"
 import { FormSuccess } from "@/components/auth/success/form-success"
-import { SignInAction } from "@/actions/signin"
+import { resetPassword } from "@/actions/resetPassword"
 
-export const LoginForm = () => {
+export const ResetForm = () => {
     const [isPending, startTransiton] = useTransition();
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
 
     console.log(error);
 
-    const form = useForm<z.infer<typeof LoginSchema>>({
-        resolver: zodResolver(LoginSchema),
+    const form = useForm<z.infer<typeof ResetSchema>>({
+        resolver: zodResolver(ResetSchema),
         defaultValues: {
             email: "",
-            password: "",
         }
     });
 
-    const handleSubmit = (values: z.infer<typeof LoginSchema>) => {
+    const handleSubmit = (values: z.infer<typeof ResetSchema>) => {
         setError("");
         setSuccess("");
 
-        startTransiton(() => {
-            SignInAction(values)
-                .then((data) => {
+
+        startTransiton(()=>{
+            resetPassword(values)
+               .then((data) =>{
                     if (data?.error) {
                         form.reset();
                         setError(data.error);
@@ -55,19 +54,17 @@ export const LoginForm = () => {
                         form.reset();
                         setSuccess(data.success);
                     }
-
-                })
-                .catch(() => setError("Something went wrong"));
+               })
+               .catch(() => setError("Something went wrong"))
         })
     }
 
     return (
         <>
             <CardWrapper
-                headerLabel="WELCOME BACK"
-                backButtonLabel="Don't have an account?"
-                backButtonHref="/auth/signup"
-                showSocial
+                headerLabel="Forget Password"
+                backButtonLabel="Back to Signin"
+                backButtonHref="/auth/signin"
             >
                 <Form {...form} >
                     <form
@@ -95,36 +92,7 @@ export const LoginForm = () => {
                                     </FormItem>
                                 )}
                             />
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Password
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                placeholder="Your password"
-                                                type="password"
-                                                disabled={isPending}
-                                            />
-                                        </FormControl>
-                                        <Button
-                                            size="sm"
-                                            variant="link"
-                                            className="flex justify-end px-0 font-normal"
-                                            asChild
-                                        >
-                                            <Link href="/auth/reset">
-                                                Forget Password?
-                                            </Link>
-                                        </Button>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                           
                         </div>
                         <FormSuccess message={success} />
                         <FormError message={error} />
@@ -133,7 +101,7 @@ export const LoginForm = () => {
                             className="w-full"
                             disabled={isPending}
                         >
-                            Sign in
+                            Send Reset Email
                         </Button>
                     </form>
                 </Form>
