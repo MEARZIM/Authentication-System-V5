@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import authConfig from "@/auth.config"
 import { getUserById } from "@/data/user"
 import { UserRole } from "@prisma/client"
+import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
 
 
 export const {
@@ -31,19 +32,34 @@ export const {
   },
   callbacks: {
     async signIn({ user, account }) {
-      console.log({
-        user,
-        account,
-      })
-       // Allow OAuth without email verification
-       if (account?.provider !== "credentials") return true;
 
-       const existingUser = await getUserById(user.id as string);
- 
-       // Prevent sign in without email verification
-       if (!existingUser?.emailVerified) return false;
+      // Allow OAuth without email verification
+      if (account?.provider !== "credentials") return true;
 
-       return true;
+      const existingUser = await getUserById(user.id as string);
+
+      // Prevent sign in without email verification
+      if (!existingUser?.emailVerified) return false;
+
+      if (existingUser.isTwoFactorEnabled) {
+        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id);
+        console.log({
+          twoFactorConfirmation
+        })
+
+        if (!twoFactorConfirmation) {
+          return false
+        }
+
+        // Delete two factor confirmation on next Sign in attempt
+        await db.twoFactorConfirmation.delete({
+          where: {
+            id: twoFactorConfirmation.id,
+          }
+        })
+      }
+
+      return true;
     },
 
     async session({ token, session },) {
