@@ -1,23 +1,33 @@
-import { auth, signOut } from '@/auth'
-import { Button } from '@/components/ui/button';
+"use client"
+
 import React from 'react'
 
-const UserPage = async () => {
-  const session = await auth();
+import { SignOut } from '@/actions/signout';
+import { Button } from '@/components/ui/button';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { NavBar } from '../../_components/navbar';
+
+const UserPage = () => {
+  const user = useCurrentUser();
+
+  const onClick = () => {
+    SignOut();
+  }
 
   return (
-    <div>
-      Users Page
-      {JSON.stringify(session)}
-      <form action={async () => {
-        "use server"
-        await signOut();
-      }}>
-        <Button variant="outline" size="lg">
+    <>
+      <NavBar />
+      <div className='w-[100vw]'>
+
+        {/* {JSON.stringify(user)} */}
+        lorem20000
+      </div>
+      <form >
+        <Button variant="outline" size="lg" onClick={onClick}>
           SignOut
         </Button>
       </form>
-    </div>
+    </>
   )
 }
 

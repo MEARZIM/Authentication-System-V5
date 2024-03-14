@@ -65,8 +65,8 @@ export const generateTwoFactorToken = async (
 ) => {
     const token = crypto.randomInt(100_000, 1_000_000).toString();
 
-    //Late Change to 15 mins
-    const expires = new Date(new Date().getTime() + 3600 * 1000);
+    // Token is valid for 10 minutes
+    const expires = new Date(new Date().getTime() + 10 * 60 * 1000);
 
     const existingToken = await getTwoFactorTokenByEmail(email);
 
