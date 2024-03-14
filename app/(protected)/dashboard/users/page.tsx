@@ -5,7 +5,7 @@ import React from 'react'
 import { SignOut } from '@/actions/signout';
 import { Button } from '@/components/ui/button';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { NavBar } from '../../_components/navbar';
+import { Header } from '../../_components/Header';
 
 const UserPage = () => {
   const user = useCurrentUser();
@@ -16,8 +16,8 @@ const UserPage = () => {
 
   return (
     <>
-      <NavBar />
-      <div className='w-[100vw]'>
+      <Header />
+      <div className='w-full'>
 
         {/* {JSON.stringify(user)} */}
         lorem20000

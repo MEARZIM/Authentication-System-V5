@@ -46,7 +46,10 @@ export const UserButton = () => {
         <div className="relative">
             <button className="block m-2 rounded-full shadow-lg bg-white" onClick={toggleDropdown}>
                 <Avatar>
-                    <AvatarImage alt="User profile picture" src={user?.image || ""} />
+                    <AvatarImage 
+                    alt="User profile picture" 
+                    src={user?.image || ""} 
+                    />
                     <AvatarFallback className="bg-sky-500">
                         <FaUser className="text-white" />
                     </AvatarFallback>
@@ -83,7 +86,7 @@ export const UserButton = () => {
                             onClick={HandleSignOut}
                         >
                             <span className="flex align-baseline gap-x-2">
-                                <PiSignOutThin size={20} /> Sign out
+                                <PiSignOutThin size={16} /> Sign out
                             </span>
                         </Button>
                     </div>
