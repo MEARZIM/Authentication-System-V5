@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import { LandingNavbar } from "@/components/LandingPage/Navbar";
 import { HeroSection } from "@/components/LandingPage/heroSection";
 import { Footer } from "@/components/LandingPage/footer";
+import CardFlip from "@/components/LandingPage/Cards/card";
 
 const font = Poppins({
   subsets: ["latin"],
@@ -14,6 +15,7 @@ export default function Home() {
     <main className="max-w-7xl mx-auto">
       <LandingNavbar />
       <HeroSection />
+      <CardFlip/>
       <Footer />
     </main>
   );
